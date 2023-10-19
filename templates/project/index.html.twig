@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Project index{% endblock %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Blog | {{ app.user.userIdentifier }} </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+{#                <li class="nav-item">#}
+{#                    <a class="nav-link" href="{{ path('dashboard') }}">Dashboard</a>#}
+{#                </li>#}
+                <li class="nav-item">
+                    <button class="btn btn-outline-dark" ><a class="nav-link" href="{{ path('app_logout') }}" style="color: red">Déconnexion</a></button>
+                    <button class="btn btn-outline-success" ><a class="nav-link" href="../admin" style="color: black">Admin</a></button>
+
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="text-center mt-5 mb-3">Symfony Project Manager</h2>
+        <div class="card">
+            <div class="card-header">
+                <a class="btn btn-outline-primary" href="{{ path('app_project_new') }}">
+                    Create New Project
+                </a>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Date Created</th>
+                        <th>Date Updated</th>
+                        <th width="240px">Action</th>
+                    </tr>
+                    {% for project in projects %}
+                        <tr>
+                            <td>{{ project.name }}</td>
+                            <td>{{ project.description }}</td>
+
+                            <td class="card-text">Create at: {{ project.createdAt | format_datetime( locale='fr')  }}</td>
+                            <td class="card-text">Update at: {{ project.updatedAt | format_datetime( locale='fr') }}</td>
+                            <td>
+                                <form method="post" action="{{ path('app_project_delete', {'id': project.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                    <a
+                                            class="btn btn-outline-info"
+                                            href="{{ path('app_project_show', {'id': project.id}) }}">
+                                        Show
+                                    </a>
+                                    <a
+                                            class="btn btn-outline-success"
+                                            href="{{ path('app_project_edit', {'id': project.id}) }}">
+                                        Edit
+                                    </a>
+
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ project.id) }}">
+                                    <button class="btn btn-outline-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
